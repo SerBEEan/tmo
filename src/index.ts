@@ -1,54 +1,30 @@
-import { random } from './utils/random';
-import { ListFutureEvents } from './utils/listFutureEvents';
-import { EventType, Event } from './typings/Event';
+import { simulationModel } from './model';
+import { calculateStatistics, printStatistics } from './statistics';
 
-const list = new ListFutureEvents();
-let modelTime = 0,          // модельное время
-    numberApps = 0,         // количество заявок
-    numberRejectedApps = 0; // количество отклоненных заявок
+const   NUMBER_SERVICE_CHANNELS = 1,  // число каналов обслуживания
+        NUMBER_PLACE_QUEUE = 1,       // число мест в очереди
+        INTENSITY_SERVICE_APPS = 2,   // интенсивность обслуживания заявок
+        INTENSITY_RECEIPT_APPS = 2,   // интенсивность поступления заявок
+        STATISTICS_STEP = 100;        // шаг сбора статистики
 
-let isDeviceFree = true;
-const queue: Event[] = [];
+const NUMBER_RUNS = 1000;
 
 function main() {
-    // Добавил первое событие
-    createEvent(EventType.ADD);
+    const statisticsOnModels: number[][][] = [];
 
-    while (modelTime < 1000) {
-        const event = list.pop();
-
-        if (event && event.type === EventType.ADD) {
-            numberApps++;
-
-            if (isDeviceFree) {
-                isDeviceFree = false;
-                createEvent(EventType.REMOVE);
-            } else {
-                if (numberApps <= 1) {
-                    queue.push(event);
-                } else {
-                    numberApps--;
-                    numberRejectedApps++;
-                }
-            }
-
-            createEvent(EventType.ADD);
-        }
-
-        if (event && event.type === EventType.REMOVE) {
-            numberApps--;
-            if (queue.length > 0) {
-                createEvent(EventType.REMOVE);
-            } else {
-                isDeviceFree = true;
-            }
-        }
+    for (let i = 0; i < NUMBER_RUNS; i++) {
+        statisticsOnModels.push(
+            simulationModel({
+                intensityReceiptApps: INTENSITY_RECEIPT_APPS,
+                intensityServiceApps: INTENSITY_SERVICE_APPS,
+                numberPlaceQueue: NUMBER_PLACE_QUEUE,
+                numberServiceChannels: NUMBER_SERVICE_CHANNELS,
+                statisticStep: STATISTICS_STEP,
+            })
+        );
     }
-}
-
-function createEvent(type: EventType) {
-    modelTime += random();
-    list.add({ time: modelTime, type});
+    
+    printStatistics(calculateStatistics(statisticsOnModels, NUMBER_RUNS), STATISTICS_STEP);
 }
 
 main();

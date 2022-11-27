@@ -1,4 +1,4 @@
-import { Event, EventType } from '../typings/Event';
+import { Event } from './typings/Event';
 
 export class ListFutureEvents {
     private list: Event[] = [];
@@ -14,7 +14,9 @@ export class ListFutureEvents {
         this.list.sort((a, b) => b.time - a.time);
     }
 
-    pop(): Event | undefined {
-        return this.list.pop();
+    pop(time: number): Event | undefined {
+        if (this.list[this.list.length - 1]?.time <= time) {
+            return this.list.pop();
+        }
     }
 }
