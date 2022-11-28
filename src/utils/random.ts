@@ -13,5 +13,5 @@ function LCG(): GetNumber {
 const getNumber = LCG();
 
 export function random(param: number = 1): number {
-    return Math.log(1 - getNumber()) / (-1 * param);
+    return Math.log(1 - getNumber()) / (-1 * param) * 1000;
 }

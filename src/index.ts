@@ -1,11 +1,12 @@
 import { simulationModel } from './model';
 import { calculateStatistics, printStatistics, StatisticsData } from './statistics';
 
-const   NUMBER_SERVICE_CHANNELS = 1,  // число каналов обслуживания
-        NUMBER_PLACE_QUEUE = 1,       // число мест в очереди
+const   NUMBER_SERVICE_CHANNELS = 3,  // число каналов обслуживания
+        NUMBER_PLACE_QUEUE = 2,       // число мест в очереди
+        INTENSITY_RECEIPT_APPS = 7,   // интенсивность поступления заявок
         INTENSITY_SERVICE_APPS = 2,   // интенсивность обслуживания заявок
-        INTENSITY_RECEIPT_APPS = 2,   // интенсивность поступления заявок
-        STATISTICS_STEP = 100;        // шаг сбора статистики
+        STATISTICS_STEP = 100,        // шаг сбора статистики
+        MODAL_TIME_LIMIT = 1600;
 
 const NUMBER_RUNS = 1000;
 
@@ -20,6 +21,7 @@ function main() {
                 numberPlaceQueue: NUMBER_PLACE_QUEUE,
                 numberServiceChannels: NUMBER_SERVICE_CHANNELS,
                 statisticStep: STATISTICS_STEP,
+                modalTimeLimit: MODAL_TIME_LIMIT,
             })
         );
     }

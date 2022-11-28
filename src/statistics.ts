@@ -18,11 +18,11 @@ export function identifyModelState(params: IdentifyModelStateParams): number[] {
         numberPlaceInQueue,
     } = params;
 
-    const numberCases = numberPlaceInQueue + numberChannels;
+    const numberCases = numberPlaceInQueue + numberChannels + 1;
     const numberBusyChannels = numberChannels - numberFreeChannels;
     const numberBusyPlaceInQueue = numberPlaceInQueue - numberFreePlacesInQueue;
     
-    const state = Array(numberCases + 1).fill(0);
+    const state = Array(numberCases).fill(0);
     state[numberBusyChannels + numberBusyPlaceInQueue] = 1;
 
     return state;

@@ -9,6 +9,7 @@ interface SimulationModelParams {
     intensityServiceApps: number;
     intensityReceiptApps: number;
     statisticStep: number;
+    modalTimeLimit: number;
 }
 
 export function simulationModel(params: SimulationModelParams): StatisticsData {
@@ -18,10 +19,11 @@ export function simulationModel(params: SimulationModelParams): StatisticsData {
         numberPlaceQueue,
         numberServiceChannels,
         statisticStep,
+        modalTimeLimit,
     } = params;
 
     const list = new ListFutureEvents();
-    const modelStatistics: number[][] = [];
+    const modelStatistics: StatisticsData = [];
 
     let numberAllApps = 0,                              // всего заявок в системе
         numberRejectedApps = 0,                         // количество отклоненных заявок
@@ -29,8 +31,9 @@ export function simulationModel(params: SimulationModelParams): StatisticsData {
         numberFreeChannels = numberServiceChannels;     // число свободных каналов
 
     list.add({ time: random(intensityReceiptApps), type: EventType.ADD });
+    list.add({ time: statisticStep, type: EventType.COLLECT_EVENT });
 
-    for (let modelTime = 0; modelTime < 1000; modelTime++) {
+    for (let modelTime = 0, numberCollectStatistics = 1; modelTime < modalTimeLimit; modelTime++) {
         const event = list.pop(modelTime);
 
         if (event?.type === EventType.ADD) {
@@ -60,7 +63,7 @@ export function simulationModel(params: SimulationModelParams): StatisticsData {
             }
         }
 
-        if (modelTime % statisticStep === 0) {
+        if (event?.type === EventType.COLLECT_EVENT) {
             modelStatistics.push(
                 identifyModelState({
                     numberChannels: numberServiceChannels,
@@ -69,8 +72,20 @@ export function simulationModel(params: SimulationModelParams): StatisticsData {
                     numberPlaceInQueue: numberPlaceQueue,
                 })
             );
+            numberCollectStatistics++;
+
+            list.add({ time: statisticStep * numberCollectStatistics, type: EventType.COLLECT_EVENT });
         }
     }
+
+    modelStatistics.push(
+        identifyModelState({
+            numberChannels: numberServiceChannels,
+            numberFreeChannels,
+            numberFreePlacesInQueue,
+            numberPlaceInQueue: numberPlaceQueue,
+        })
+    );
 
     return modelStatistics;
 }
