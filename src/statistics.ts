@@ -1,6 +1,8 @@
 import { sumArrays, divideArray } from './utils/array';
 import { Plain } from './typings/Object';
 
+export type StatisticsData = number[][];
+
 interface IdentifyModelStateParams {
     numberPlaceInQueue: number;
     numberChannels: number;

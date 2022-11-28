@@ -1,5 +1,5 @@
 import { ListFutureEvents } from './listFutureEvents';
-import { identifyModelState } from './statistics';
+import { identifyModelState, StatisticsData } from './statistics';
 import { EventType } from './typings/Event';
 import { random } from './utils/random';
 
@@ -11,9 +11,7 @@ interface SimulationModelParams {
     statisticStep: number;
 }
 
-type Statistics = number[][];
-
-export function simulationModel(params: SimulationModelParams): Statistics {
+export function simulationModel(params: SimulationModelParams): StatisticsData {
     const {
         intensityReceiptApps,
         intensityServiceApps,
